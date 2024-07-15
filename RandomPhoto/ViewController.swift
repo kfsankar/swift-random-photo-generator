@@ -67,13 +67,20 @@ class ViewController: UIViewController {
     }
     
     func getRandomPhoto() {
-        let urlString = "https://source.unsplash.com/random/600x600"
-        let url = URL(string: urlString)!
-        guard let data = try? Data(contentsOf: url) else{
-            return
+        if let url = URL(string: "https://picsum.photos/600") {
+            NetworkManager.shared.fetchData(from: url) { [weak self] data, response, error in
+                if let error = error {
+                    print("Error: \(error)")
+                    return
+                }
+
+                if let data = data, let image = UIImage(data: data) {
+                    DispatchQueue.main.async {
+                        self?.imageView.image = image
+                    }
+                }
+            }
         }
-        imageView.image = UIImage(data: data)
     }
 
 }
-
